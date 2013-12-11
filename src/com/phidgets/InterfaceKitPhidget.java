@@ -31,27 +31,54 @@ public class InterfaceKitPhidget extends Phidget {
     private boolean inputState = false;
     private boolean outputState = false;
     
+    /**
+     * Constructor
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public InterfaceKitPhidget() {
         instance = this;
     }
     
+    /**
+     * The close method.
+     * @throws PhidgetException
+     */
     public void close() throws PhidgetException {
     }
     
+    /**
+     * The addAttachListener method.
+     * @param al
+     */
     public void addAttachListener(AttachListener al) {
     }
     
+    /**
+     *The addDetachListener method.
+     * @param dl
+     */
     public void addDetachListener(DetachListener dl) {
     }
     
+    /**
+     * The addErrorListener method.
+     * @param el
+     */
     public void addErrorListener(ErrorListener el) {
     }
     
+    /**
+     * The addInputChangeListener method.
+     * @param icl
+     */
     public void addInputChangeListener(InputChangeListener icl) {
         this.inputChangeListener = icl;
     }
     
+    /**
+     * The addOutputChangeListener method.
+     * @param ocl
+     */
     public void addOutputChangeListener(OutputChangeListener ocl) {
         this.outputChangeListener = ocl;
     }
