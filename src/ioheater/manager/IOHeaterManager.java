@@ -41,8 +41,8 @@ public class IOHeaterManager implements AttachListener,
     private IInterfaceKitStateEventHandler interfaceKitStateEventHandler;
     private static final int TEMPERATURE_SENSOR_ANALOGUE_PIN = 0;
     private static final int TEMPERATURE_SENSOR_TRIGGER_DEFAULT = 10;
-    private static final int HEATER_DIGITAL_INPUT_PIN = 1;
-    private static final int HEATER_DIGITAL_OUTPUT_PIN = 2;
+    private static final int HEATER_DIGITAL_INPUT_PIN = 0;
+    private static final int HEATER_DIGITAL_OUTPUT_PIN = 0;
     private float targetTemperature = 0;
     private boolean isTemperatureManagementActive = false;
 
