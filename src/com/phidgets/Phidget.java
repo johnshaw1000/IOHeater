@@ -11,6 +11,11 @@ package com.phidgets;
  * @author jshaw
  */
 public class Phidget {
+
+    /**
+     *
+     * @return
+     */
     public static String getLibraryVersion() {
         return "Fake";
     }

@@ -11,5 +11,10 @@ package com.phidgets.event;
  * @author jshaw
  */
 public interface ErrorListener {
+
+    /**
+     *
+     * @param ee
+     */
     void error(ErrorEvent ee);
 }

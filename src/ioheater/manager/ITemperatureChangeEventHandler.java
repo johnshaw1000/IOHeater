@@ -11,5 +11,10 @@ package ioheater.manager;
  * @author jshaw
  */
 public interface ITemperatureChangeEventHandler {
+
+    /**
+     *
+     * @param temperature
+     */
     void temperatureChanged(float temperature);
 }

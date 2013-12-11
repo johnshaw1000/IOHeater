@@ -11,5 +11,10 @@ package com.phidgets.event;
  * @author jshaw
  */
 public interface DetachListener {
+
+    /**
+     *
+     * @param de
+     */
     void detached(DetachEvent de);
 }

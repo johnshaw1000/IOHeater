@@ -37,6 +37,10 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         heaterOn = true;
     }
     
+    /**
+     *
+     * @param temperature
+     */
     @Override
     public void temperatureChanged(float temperature) {
         this.temperature = temperature;
@@ -62,26 +66,44 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         this.outputState = "High";
     }
     
+    /**
+     *
+     */
     public IOHeaterManagerTest() {
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *
+     */
     @Before
     public void setUp() {
         heaterOn = false;
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
 
+    /**
+     *
+     */
     @Test
     public void initialise() {
         // Arrange
@@ -94,6 +116,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         Assert.assertFalse(this.heaterOn);
     }
     
+    /**
+     *
+     */
     @Test
     public void getImplementationLibraryVersion() {
         // Arrange
@@ -106,6 +131,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         Assert.assertEquals(expected, actual);
     }
     
+    /**
+     *
+     */
     @Test
     public void runPhidget() {
         // Arrange
@@ -118,6 +146,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         Assert.assertFalse(this.heaterOn);
     }
     
+    /**
+     *
+     */
     @Test
     public void getTemperature37() {
         // Arrange
@@ -133,6 +164,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         Assert.assertEquals(expected, actual, 1);
     }
 
+    /**
+     *
+     */
     @Test
     public void getTemperature32_4() {
         // Arrange
@@ -148,6 +182,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         Assert.assertEquals(expected, actual, 1);
     }
 
+    /**
+     *
+     */
     @Test
     public void getTemperature29() {
         // Arrange
@@ -163,6 +200,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         Assert.assertEquals(expected, actual, 1);
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement37() {
         try {
@@ -188,6 +228,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement29() {
         try {
@@ -217,6 +260,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement29_1() {
         try {
@@ -246,6 +292,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement29_2() {
         try {
@@ -271,6 +320,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement29_3() {
         try {
@@ -296,6 +348,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement29_4() {
         try {
@@ -328,6 +383,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void startTemperatureManagement29_5() {
         try {
@@ -361,6 +419,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void stopTemperatureManagement() {
         try {
@@ -384,6 +445,9 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
         }
     }
     
+    /**
+     *
+     */
     @Test
     public void inputOutputStateChangedHigh() {
         // Arrange

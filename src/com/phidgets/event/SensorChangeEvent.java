@@ -13,14 +13,24 @@ import com.phidgets.Phidget;
  * @author jshaw
  */
 public class SensorChangeEvent {
-    private int value;
+    private final int value;
     
+    /**
+     *
+     * @param source
+     * @param index
+     * @param value
+     */
     public SensorChangeEvent(Phidget source,
                          int index,
                          int value) {
         this.value = value;
     }
     
+    /**
+     *
+     * @return
+     */
     public int getValue() {
         return this.value;
     }

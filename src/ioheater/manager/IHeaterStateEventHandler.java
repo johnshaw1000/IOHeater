@@ -7,10 +7,18 @@
 package ioheater.manager;
 
 /**
- *
+ * Handler for HeaterStateEvent.
  * @author jshaw
  */
 public interface IHeaterStateEventHandler {
+
+    /**
+     * Heater stopped event.
+     */
     void heaterStopped();
+
+    /**
+     * Heater started event.
+     */
     void heaterStarted();
 }

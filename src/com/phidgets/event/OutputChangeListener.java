@@ -11,5 +11,10 @@ package com.phidgets.event;
  * @author jshaw
  */
 public interface OutputChangeListener {
+
+    /**
+     *
+     * @param oce
+     */
     void outputChanged(OutputChangeEvent oce);
 }

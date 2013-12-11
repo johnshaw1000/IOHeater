@@ -11,5 +11,10 @@ package com.phidgets.event;
  * @author jshaw
  */
 public interface SensorChangeListener {
+
+    /**
+     *
+     * @param ae
+     */
     void sensorChanged(SensorChangeEvent ae);
 }

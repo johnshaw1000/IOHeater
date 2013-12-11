@@ -11,5 +11,10 @@ package com.phidgets.event;
  * @author jshaw
  */
 public interface AttachListener {
+
+    /**
+     *
+     * @param ae
+     */
     void attached(AttachEvent ae);
 }

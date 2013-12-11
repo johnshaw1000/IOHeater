@@ -83,36 +83,81 @@ public class InterfaceKitPhidget extends Phidget {
         this.outputChangeListener = ocl;
     }
     
+    /**
+     *
+     * @param scl
+     */
     public void addSensorChangeListener(SensorChangeListener scl) {
         this.sensorChangeListener = scl;
     }
     
+    /**
+     *
+     * @throws PhidgetException
+     */
     public void openAny() throws PhidgetException {
     }
     
+    /**
+     *
+     * @throws PhidgetException
+     */
     public void waitForAttachment() throws PhidgetException {
     }
     
+    /**
+     *
+     * @return
+     * @throws PhidgetException
+     */
     public String getDeviceName() throws PhidgetException {
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws PhidgetException
+     */
     public int getInputCount() throws PhidgetException {
         return 0;
     }
     
+    /**
+     *
+     * @param input
+     * @return
+     * @throws PhidgetException
+     */
     public boolean getInputState(int input) throws PhidgetException {
         return this.inputState;
     }
     
+    /**
+     *
+     * @param digPin
+     * @return
+     * @throws PhidgetException
+     */
     public boolean getOutputState(int digPin) throws PhidgetException {
         return this.outputState;
     }
     
+    /**
+     *
+     * @return
+     * @throws PhidgetException
+     */
     public int getOutputCount() throws PhidgetException {
         return 0;
     }
     
+    /**
+     *
+     * @param digPin
+     * @param value
+     * @throws PhidgetException
+     */
     public void setOutputState(int digPin, boolean value) throws PhidgetException {
         this.outputState = value;
         this.outputChangeListener.outputChanged(new OutputChangeEvent(this, digPin, value));
@@ -121,10 +166,22 @@ public class InterfaceKitPhidget extends Phidget {
         this.inputChangeListener.inputChanged(new InputChangeEvent(this, digPin, value));
     }
     
+    /**
+     *
+     * @param state
+     * @return
+     * @throws PhidgetException
+     */
     public int getSensorRawValue(int state) throws PhidgetException {
         return this.sensorRawValue;
     }
     
+    /**
+     *
+     * @param sensor
+     * @param trigger
+     * @throws PhidgetException
+     */
     public void setSensorChangeTrigger(int sensor, int trigger) throws PhidgetException {
         if (sensor == 0) {
             this.sensorChangeTrigger = trigger;
@@ -137,11 +194,21 @@ public class InterfaceKitPhidget extends Phidget {
     }
     
     /* TEST METHODS ONLY ******************************************************/
+
+    /**
+     *
+     * @return
+     */
+    
     
     public static InterfaceKitPhidget getInstance() {
         return instance;
     }
 
+    /**
+     *
+     * @param val
+     */
     public void setSensorRawValue(int val) {
         this.sensorRawValue = val;
         

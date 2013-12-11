@@ -20,11 +20,6 @@ import org.jfree.data.time.Second;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +29,6 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
@@ -383,6 +377,9 @@ public class IOHeaterUI extends javax.swing.JFrame
         logger.info("Exiting formWindowOpened");
     }
 
+    /**
+     * Run the interface kit manager.
+     */
     public void runPhidget() {
         logger.info("EnteringrunPhidget");
         
@@ -433,6 +430,10 @@ public class IOHeaterUI extends javax.swing.JFrame
         this.outputState.setText("High");
     }
     
+    /**
+     *
+     * @param temperature
+     */
     @Override
     public void temperatureChanged(float temperature) {
         this.currentTemperature.setText(String.format("%.1f", temperature));
@@ -477,17 +478,11 @@ public class IOHeaterUI extends javax.swing.JFrame
         this.repaint();
     }
 
-    public class chartListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            //repaint();  // Call the repaint() method in the panel class.
-
-            logger.info("timer");
-        }
-    }
-
-    public ChartPanel chart() {
+    /**
+     *
+     * @return
+     */
+    public final ChartPanel chart() {
         this.createDataset();
         JFreeChart chart = createChart(this.dataSet);
         ChartPanel panel = new ChartPanel(chart);
@@ -541,18 +536,7 @@ public class IOHeaterUI extends javax.swing.JFrame
 
     private void createDataset() {
 
-        Second currentTime = new Second();
         TimeSeries timeSeries = new TimeSeries("Time");
-        // Some test data
-        /*
-        timeSeries.add(new Second(0, currentTime.getMinute()), 0);
-        timeSeries.add(new Second(10, currentTime.getMinute()), 10);
-        timeSeries.add(new Second(43, currentTime.getMinute()), 43);
-        timeSeries.add(new Second(51, currentTime.getMinute()), 51);
-        timeSeries.add(new Second(67, currentTime.getMinute()), 67);
-        timeSeries.add(new Second(74, currentTime.getMinute()), 74);
-        timeSeries.add(new Second(80, currentTime.getMinute()), 80);
-        */
         this.dataSet = new TimeSeriesCollection();
         dataSet.addSeries(timeSeries);
     }
@@ -561,42 +545,9 @@ public class IOHeaterUI extends javax.swing.JFrame
         this.dataSet.getSeries(0).addOrUpdate(new Second(), temperature);
     }
 
-    private static double[] convertFloatsToDoubles(float[] input) {
-        if (input == null) {
-            return null; // Or throw an exception - your choice
-        }
-        double[] output = new double[input.length];
-        for (int i = 0; i < input.length; i++) {
-            output[i] = input[i];
-        }
-        return output;
-    }
-
     /**
-     * ***************Thread handling methods****************************
+     * Utility method for checking active threads.
      */
-    private final ExecutorService heaterExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService chartExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService timerExecutor = Executors.newSingleThreadExecutor();
-
-    private Future<?> chartTask;
-
-    public void startNewChart() {
-
-        if (chartTask != null) {
-            chartTask.cancel(true);
-        }
-        chartTask = chartExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                DefaultXYDataset dsHold = new DefaultXYDataset();
-
-                double[][] data = {{0.0}, {0.0}};
-                //chart(dsHold);
-            }
-        });
-    }
-
     public static void checkThreads() {
         ThreadGroup mainThreadGroup = Thread.currentThread().getThreadGroup();
         ThreadGroup systemThreadGroup = mainThreadGroup.getParent();
@@ -605,6 +556,11 @@ public class IOHeaterUI extends javax.swing.JFrame
         systemThreadGroup.list();
     }
 
+    /**
+     *
+     * @param depth
+     * @return
+     */
     public static String getMethodName(final int depth) {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
 
@@ -631,19 +587,14 @@ public class IOHeaterUI extends javax.swing.JFrame
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(IOHeaterUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(IOHeaterUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(IOHeaterUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(IOHeaterUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         checkThreads();
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new IOHeaterUI().setVisible(true);
             }

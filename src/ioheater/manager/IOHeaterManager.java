@@ -49,6 +49,12 @@ public class IOHeaterManager implements AttachListener,
     private IOHeaterManager() {
     }
 
+    /**
+     * Constructor.
+     * @param heaterStateEventHandler
+     * @param temperatureChangeEventHandler
+     * @param interfaceKitStateEventHandler
+     */
     public IOHeaterManager(IHeaterStateEventHandler heaterStateEventHandler,
                 ITemperatureChangeEventHandler temperatureChangeEventHandler,
                 IInterfaceKitStateEventHandler interfaceKitStateEventHandler) {
@@ -57,6 +63,9 @@ public class IOHeaterManager implements AttachListener,
         this.interfaceKitStateEventHandler = interfaceKitStateEventHandler;
     }
 
+    /**
+     * Close the interface kit.
+     */
     public void close() {
         try {
             ik.close();
@@ -66,21 +75,37 @@ public class IOHeaterManager implements AttachListener,
         }
     }
 
+    /**
+     * Interface kit attached event.
+     * @param ae
+     */
     @Override
     public void attached(AttachEvent ae) {
         logger.log(Level.WARNING, "attachment of {0}", ae);
     }
     
+    /**
+     * Interface kit detached event.
+     * @param ae
+     */
     @Override
     public void detached(DetachEvent ae) {
         logger.log(Level.WARNING, "detachment of {0}", ae);
     }
 
+    /**
+     * Interface kit error event.
+     * @param ee
+     */
     @Override
     public void error(ErrorEvent ee) {
         logger.info(ee.toString());
     }
 
+    /**
+     * Interface kit input state changed event.
+     * @param ie
+     */
     @Override
     public void inputChanged(InputChangeEvent ie) {
         try {
@@ -96,6 +121,10 @@ public class IOHeaterManager implements AttachListener,
         startNewTrigger(ie.getIndex());
     }
     
+    /**
+     * Interface kit output state changed event.
+     * @param oe
+     */
     @Override
     public void outputChanged(OutputChangeEvent oe) {
         try {
@@ -109,6 +138,10 @@ public class IOHeaterManager implements AttachListener,
         }
     }
     
+    /**
+     * Interface kit sensor state change event.
+     * @param se
+     */
     @Override
     public void sensorChanged(SensorChangeEvent se){
         logger.info(String.format("SensorChangeEvent, value = %d", se.getValue()));
@@ -122,6 +155,9 @@ public class IOHeaterManager implements AttachListener,
         }
     }
 
+    /**
+     * Run the interface kit.
+     */
     public void runPhidget() {
         //Example of enabling logging.
         //Phidget.enableLogging(Phidget.PHIDGET_LOG_VERBOSE, null);
@@ -162,6 +198,11 @@ public class IOHeaterManager implements AttachListener,
         }
     }
     
+    /**
+     * Set the threshold for the sensor change trigger.
+     * @param val
+     * @throws IOHeaterException
+     */
     public void setSensorChangeTrigger(int val) throws IOHeaterException {
         try {
             ik.setSensorChangeTrigger(TEMPERATURE_SENSOR_ANALOGUE_PIN, val);
@@ -172,6 +213,11 @@ public class IOHeaterManager implements AttachListener,
         }
     }
     
+    /**
+     * Handle temperature change.
+     * @param sensorValue
+     * @throws IOHeaterException
+     */
     public void temperatureChanged(int sensorValue) throws IOHeaterException {
         logger.info(String.format("Sensor value is %d", sensorValue));
         this.temperatureChangeEventHandler.temperatureChanged(convertRawSensorValue(sensorValue));
@@ -182,6 +228,10 @@ public class IOHeaterManager implements AttachListener,
         return (float)((rawValue * 0.22222) - 61.11);
     }
 
+    /**
+     * Get the temperature from the interface kit.
+     * @return
+     */
     public float getTemperature() {
         int sensorValue = 0;
         try {
@@ -194,10 +244,19 @@ public class IOHeaterManager implements AttachListener,
         return convertRawSensorValue(sensorValue);
     }
 
+    /**
+     * Get the implementation library version.
+     * @return
+     */
     public static String getImplementationLibraryVersion() {
         return Phidget.getLibraryVersion();
     }
 
+    /**
+     *
+     * @param targetTemperature
+     * @throws IOHeaterException
+     */
     public void startTemperatureManagement(float targetTemperature) throws IOHeaterException {
         this.targetTemperature = targetTemperature;
         this.isTemperatureManagementActive = true;
@@ -214,6 +273,10 @@ public class IOHeaterManager implements AttachListener,
         }
     }
 
+    /**
+     *
+     * @throws IOHeaterException
+     */
     public void stopTemperatureManagement() throws IOHeaterException {
         this.isTemperatureManagementActive = false;
         stopHeater();
@@ -241,6 +304,11 @@ public class IOHeaterManager implements AttachListener,
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws IOHeaterException
+     */
     public boolean isHeaterOn() throws IOHeaterException {
         return getDigitalOutput(1);
     }

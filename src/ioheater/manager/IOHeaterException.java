@@ -30,10 +30,17 @@ public class IOHeaterException extends Exception {
         return super.getMessage();
     }
     
+    /**
+     * Determines if this exception has already been logged.
+     * @return boolean
+     */
     public boolean isLogged() {
         return this.logged;
     }
     
+    /**
+     * Marks this exception as already logged.
+     */
     public void setLogged() {
         this.logged = true;
     }
