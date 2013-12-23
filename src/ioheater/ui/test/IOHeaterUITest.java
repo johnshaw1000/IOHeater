@@ -96,6 +96,7 @@ public class IOHeaterUITest extends javax.swing.JFrame {
         timerToggleButton = new javax.swing.JToggleButton();
         timerInterval = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        proximityCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Test");
@@ -146,6 +147,13 @@ public class IOHeaterUITest extends javax.swing.JFrame {
         jLabel3.setText("Interval (ms)");
         jLabel3.setToolTipText("");
 
+        proximityCheckBox.setLabel("Spectometer Proximity");
+        proximityCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proximityCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -153,6 +161,9 @@ public class IOHeaterUITest extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(proximityCheckBox)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(testButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,7 +199,9 @@ public class IOHeaterUITest extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(timerToggleButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(proximityCheckBox)
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         pack();
@@ -223,6 +236,15 @@ public class IOHeaterUITest extends javax.swing.JFrame {
     private void timerIntervalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timerIntervalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_timerIntervalActionPerformed
+
+    private void proximityCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proximityCheckBoxActionPerformed
+        // TODO add your handling code here:
+        if (this.proximityCheckBox.isSelected()) {
+            InterfaceKitPhidget.getInstance().setInputState(0, true);
+        } else {
+            InterfaceKitPhidget.getInstance().setInputState(0, false);            
+        }
+    }//GEN-LAST:event_proximityCheckBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,6 +283,7 @@ public class IOHeaterUITest extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JCheckBox proximityCheckBox;
     private javax.swing.JButton testButton;
     private javax.swing.JTextField timerInterval;
     private javax.swing.JToggleButton timerToggleButton;

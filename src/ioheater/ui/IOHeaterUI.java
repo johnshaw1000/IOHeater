@@ -7,7 +7,7 @@ package ioheater.ui;
 
 import ioheater.manager.IOHeaterManager;
 import ioheater.manager.IHeaterStateEventHandler;
-import ioheater.manager.IInterfaceKitStateEventHandler;
+import ioheater.manager.ISpectrometerEventHandler;
 import ioheater.manager.IOHeaterException;
 import ioheater.manager.ITemperatureChangeEventHandler;
 import java.awt.Color;
@@ -37,7 +37,8 @@ import org.jfree.ui.RectangleInsets;
  * @author md1xsar
  */
 public class IOHeaterUI extends javax.swing.JFrame
-    implements IHeaterStateEventHandler, ITemperatureChangeEventHandler, IInterfaceKitStateEventHandler {
+    implements IHeaterStateEventHandler, ITemperatureChangeEventHandler,
+        ISpectrometerEventHandler {
 
     private static final Logger logger = Logger.getLogger("ioheater.ui.ioheaterui");
     private final SimpleDateFormat sdf;
@@ -102,9 +103,9 @@ public class IOHeaterUI extends javax.swing.JFrame
         currentTemperature = new javax.swing.JFormattedTextField();
         targetTemperature = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        inputState = new javax.swing.JTextField();
-        outputState = new javax.swing.JTextField();
+        pumpStateLabel = new javax.swing.JLabel();
+        spectrometerProximity = new javax.swing.JTextField();
+        pumpState = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         tempTolLabel = new javax.swing.JLabel();
         temperatureTrigger = new javax.swing.JTextField();
@@ -176,27 +177,30 @@ public class IOHeaterUI extends javax.swing.JFrame
         targetTemperature.setPreferredSize(new java.awt.Dimension(35, 25));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel1.setText("Interface Kit Input State");
+        jLabel1.setText("Spectrometer Proximity");
+        jLabel1.setToolTipText("");
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel2.setText("Interface Kit Output State");
+        pumpStateLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        pumpStateLabel.setText("Pump State");
+        pumpStateLabel.setToolTipText("");
 
-        inputState.setBackground(new java.awt.Color(0, 0, 0));
-        inputState.setForeground(new java.awt.Color(0, 255, 255));
-        inputState.setText("Low");
-        inputState.setMinimumSize(new java.awt.Dimension(6, 25));
-        inputState.setName(""); // NOI18N
-        inputState.setPreferredSize(new java.awt.Dimension(35, 35));
-        inputState.addActionListener(new java.awt.event.ActionListener() {
+        spectrometerProximity.setBackground(new java.awt.Color(0, 0, 0));
+        spectrometerProximity.setForeground(new java.awt.Color(0, 255, 255));
+        spectrometerProximity.setText("Off");
+        spectrometerProximity.setMinimumSize(new java.awt.Dimension(6, 25));
+        spectrometerProximity.setName(""); // NOI18N
+        spectrometerProximity.setPreferredSize(new java.awt.Dimension(35, 35));
+        spectrometerProximity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputStateActionPerformed(evt);
+                spectrometerProximityActionPerformed(evt);
             }
         });
 
-        outputState.setBackground(new java.awt.Color(0, 0, 0));
-        outputState.setForeground(new java.awt.Color(0, 255, 255));
-        outputState.setText("Low");
-        outputState.setPreferredSize(new java.awt.Dimension(35, 25));
+        pumpState.setBackground(new java.awt.Color(0, 0, 0));
+        pumpState.setForeground(new java.awt.Color(0, 255, 255));
+        pumpState.setText("Off");
+        pumpState.setToolTipText("");
+        pumpState.setPreferredSize(new java.awt.Dimension(35, 25));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -222,12 +226,12 @@ public class IOHeaterUI extends javax.swing.JFrame
                                     .addComponent(targetTemperature, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(61, 61, 61)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pumpStateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(inputState, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                            .addComponent(outputState, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(spectrometerProximity, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                            .addComponent(pumpState, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -235,7 +239,7 @@ public class IOHeaterUI extends javax.swing.JFrame
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(inputState, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(spectrometerProximity, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(currentTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -244,8 +248,8 @@ public class IOHeaterUI extends javax.swing.JFrame
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(targetTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(outputState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pumpStateLabel)
+                    .addComponent(pumpState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckHeater)
@@ -362,9 +366,9 @@ public class IOHeaterUI extends javax.swing.JFrame
         }
     }//GEN-LAST:event_temperatureTriggerActionPerformed
 
-    private void inputStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputStateActionPerformed
+    private void spectrometerProximityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrometerProximityActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_inputStateActionPerformed
+    }//GEN-LAST:event_spectrometerProximityActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {
         logger.info("Entering formWindowOpened");
@@ -411,23 +415,23 @@ public class IOHeaterUI extends javax.swing.JFrame
     }
     
     @Override
-    public void inputStateChangedLow() {
-        this.inputState.setText("Low");
+    public void spectrometerProximityOn() {
+        this.spectrometerProximity.setText("On");
     }
     
     @Override
-    public void inputStateChangedHigh() {
-        this.inputState.setText("High");
+    public void spectrometerProximityOff() {
+        this.spectrometerProximity.setText("Off");
     }
     
     @Override
-    public void outputStateChangedLow() {
-        this.outputState.setText("Low");
+    public void pumpStateOff() {
+        this.pumpState.setText("Off");
     }
     
     @Override
-    public void outputStateChangedHigh() {
-        this.outputState.setText("High");
+    public void pumpStateOn() {
+        this.pumpState.setText("On");
     }
     
     /**
@@ -448,6 +452,11 @@ public class IOHeaterUI extends javax.swing.JFrame
 
         this.revalidate();
         this.repaint();
+    }
+    
+    @Override    
+    public void heaterManagerStopped() {
+        this.jCheckHeater.setSelected(false);
     }
 
     @Override
@@ -604,11 +613,9 @@ public class IOHeaterUI extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField currentTemperature;
     private javax.swing.JTextField heaterState;
-    private javax.swing.JTextField inputState;
     private javax.swing.JCheckBox jCheckHeater;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
@@ -618,7 +625,9 @@ public class IOHeaterUI extends javax.swing.JFrame
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JTextField outputState;
+    private javax.swing.JTextField pumpState;
+    private javax.swing.JLabel pumpStateLabel;
+    private javax.swing.JTextField spectrometerProximity;
     private javax.swing.JFormattedTextField targetTemperature;
     private javax.swing.JLabel tempTolLabel;
     private javax.swing.JTextField temperatureTrigger;

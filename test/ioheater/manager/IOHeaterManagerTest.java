@@ -20,8 +20,9 @@ import org.junit.Test;
  * @author jshaw
  */
 public class IOHeaterManagerTest implements IHeaterStateEventHandler,
-        ITemperatureChangeEventHandler, IInterfaceKitStateEventHandler {
+        ITemperatureChangeEventHandler, ISpectrometerEventHandler {
     
+    private boolean heaterManagerOn = false;
     private boolean heaterOn = false;
     private float temperature = 0;
     private String inputState = "Unknown";
@@ -47,23 +48,28 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
     }
     
     @Override
-    public void inputStateChangedLow() {
+    public void spectrometerProximityOn() {
         this.inputState = "Low";
     }
     
     @Override
-    public void inputStateChangedHigh() {
+    public void spectrometerProximityOff() {
         this.inputState = "High";
     }
     
     @Override
-    public void outputStateChangedLow() {
+    public void pumpStateOff() {
         this.outputState = "Low";
     }
     
     @Override
-    public void outputStateChangedHigh() {
+    public void pumpStateOn() {
         this.outputState = "High";
+    }
+
+    @Override
+    public void heaterManagerStopped() {
+        this.heaterManagerOn = false;
     }
     
     /**
@@ -440,28 +446,6 @@ public class IOHeaterManagerTest implements IHeaterStateEventHandler,
 
             // Assert
             Assert.assertFalse(this.heaterOn);
-        } catch (IOHeaterException e) {
-            Assert.fail(String.format("Test failed with exception: %s", e.getMessage()));
-        }
-    }
-    
-    /**
-     *
-     */
-    @Test
-    public void inputOutputStateChangedHigh() {
-        // Arrange
-        IOHeaterManager unitUnderTest = new IOHeaterManager(this, this, this);
-        unitUnderTest.runPhidget();
-
-        try {
-            // Act
-            unitUnderTest.startTemperatureManagement(300);
-        
-            // Assert
-            Assert.assertTrue(this.heaterOn);
-            Assert.assertEquals("High", this.inputState);
-            Assert.assertEquals("High", this.outputState);
         } catch (IOHeaterException e) {
             Assert.fail(String.format("Test failed with exception: %s", e.getMessage()));
         }

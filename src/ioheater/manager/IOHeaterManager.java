@@ -20,9 +20,6 @@ import com.phidgets.event.OutputChangeEvent;
 import com.phidgets.event.OutputChangeListener;
 import com.phidgets.event.SensorChangeEvent;
 import com.phidgets.event.SensorChangeListener;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -38,11 +35,12 @@ public class IOHeaterManager implements AttachListener,
     private InterfaceKitPhidget ik;
     private IHeaterStateEventHandler heaterStateEventHandler;
     private ITemperatureChangeEventHandler temperatureChangeEventHandler;
-    private IInterfaceKitStateEventHandler interfaceKitStateEventHandler;
+    private ISpectrometerEventHandler spectrometerEventHandler;
     private static final int TEMPERATURE_SENSOR_ANALOGUE_PIN = 0;
     private static final int TEMPERATURE_SENSOR_TRIGGER_DEFAULT = 10;
-    private static final int HEATER_DIGITAL_INPUT_PIN = 0;
-    private static final int HEATER_DIGITAL_OUTPUT_PIN = 0;
+    private static final int HEATER_DIGITAL_OUTPUT_PIN = 1;
+    private static final int SPECTROMETER_PROXIMITY_DIGITAL_INPUT_PIN = 0;
+    private static final int PUMP_DIGITAL_OUTPUT_PIN = 0;
     private float targetTemperature = 0;
     private boolean isTemperatureManagementActive = false;
 
@@ -57,10 +55,10 @@ public class IOHeaterManager implements AttachListener,
      */
     public IOHeaterManager(IHeaterStateEventHandler heaterStateEventHandler,
                 ITemperatureChangeEventHandler temperatureChangeEventHandler,
-                IInterfaceKitStateEventHandler interfaceKitStateEventHandler) {
+                ISpectrometerEventHandler interfaceKitStateEventHandler) {
         this.heaterStateEventHandler = heaterStateEventHandler;
         this.temperatureChangeEventHandler = temperatureChangeEventHandler;
-        this.interfaceKitStateEventHandler = interfaceKitStateEventHandler;
+        this.spectrometerEventHandler = interfaceKitStateEventHandler;
     }
 
     /**
@@ -109,16 +107,17 @@ public class IOHeaterManager implements AttachListener,
     @Override
     public void inputChanged(InputChangeEvent ie) {
         try {
-            if (ik.getInputState(ie.getIndex())) {
-                this.interfaceKitStateEventHandler.inputStateChangedHigh();
+            if (this.isSpectrometerProximity()) {
+                this.startPump();
+                this.stopTemperatureManagement();
+                this.spectrometerEventHandler.spectrometerProximityOn();
             } else {
-                this.interfaceKitStateEventHandler.inputStateChangedLow();
+                this.stopPump();
+                this.spectrometerEventHandler.spectrometerProximityOff();
             }
-        } catch (PhidgetException e) {
+        } catch (IOHeaterException e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
-        
-        startNewTrigger(ie.getIndex());
     }
     
     /**
@@ -128,10 +127,20 @@ public class IOHeaterManager implements AttachListener,
     @Override
     public void outputChanged(OutputChangeEvent oe) {
         try {
-            if (ik.getOutputState(HEATER_DIGITAL_OUTPUT_PIN)) {
-                this.interfaceKitStateEventHandler.outputStateChangedHigh();
-            } else {
-                this.interfaceKitStateEventHandler.outputStateChangedLow();
+            if (oe.getIndex() == HEATER_DIGITAL_OUTPUT_PIN) {
+                if (ik.getOutputState(HEATER_DIGITAL_OUTPUT_PIN)) {
+                    this.heaterStateEventHandler.heaterStarted();
+                } else {
+                    this.heaterStateEventHandler.heaterStopped();
+                }
+            }
+            
+            if (oe.getIndex() == PUMP_DIGITAL_OUTPUT_PIN) {
+                if (ik.getOutputState(PUMP_DIGITAL_OUTPUT_PIN)) {
+                    this.spectrometerEventHandler.pumpStateOn();
+                } else {
+                    this.spectrometerEventHandler.pumpStateOff();
+                }
             }
         } catch (PhidgetException e) {
             logger.log(Level.WARNING, e.getMessage(), e);
@@ -191,6 +200,8 @@ public class IOHeaterManager implements AttachListener,
             }
 
             this.initialiseHeater();
+            this.initialisePump();
+            this.initialiseProximity();
             
             ik.setSensorChangeTrigger(TEMPERATURE_SENSOR_ANALOGUE_PIN, TEMPERATURE_SENSOR_TRIGGER_DEFAULT);
         } catch (PhidgetException ex) {
@@ -280,19 +291,20 @@ public class IOHeaterManager implements AttachListener,
     public void stopTemperatureManagement() throws IOHeaterException {
         this.isTemperatureManagementActive = false;
         stopHeater();
+        this.heaterStateEventHandler.heaterManagerStopped();
     }
     
     private void startHeater() throws IOHeaterException {
         if (!this.isHeaterOn()) {
-            this.setDigitalOutput(HEATER_DIGITAL_INPUT_PIN, true);
-            this.heaterStateEventHandler.heaterStarted();
+            this.setDigitalOutput(HEATER_DIGITAL_OUTPUT_PIN, true);
+            //this.heaterStateEventHandler.heaterStarted();
         }
     }
     
     private void stopHeater() throws IOHeaterException {
         if (this.isHeaterOn()) {
-            this.setDigitalOutput(HEATER_DIGITAL_INPUT_PIN, false);
-            this.heaterStateEventHandler.heaterStopped();
+            this.setDigitalOutput(HEATER_DIGITAL_OUTPUT_PIN, false);
+            //this.heaterStateEventHandler.heaterStopped();
         }
     }
 
@@ -310,7 +322,7 @@ public class IOHeaterManager implements AttachListener,
      * @throws IOHeaterException
      */
     public boolean isHeaterOn() throws IOHeaterException {
-        return getDigitalOutput(1);
+        return getDigitalOutput(HEATER_DIGITAL_OUTPUT_PIN);
     }
 
     private boolean getDigitalOutput(int digPin) throws IOHeaterException {
@@ -321,7 +333,11 @@ public class IOHeaterManager implements AttachListener,
             throw new IOHeaterException("Unable to get digital output", pe);
         }
     }
-
+    
+    private boolean isSpectrometerProximity() {
+        return this.getDigitalInput(SPECTROMETER_PROXIMITY_DIGITAL_INPUT_PIN);
+    }
+    
     private boolean getDigitalInput(int digPin) {
         boolean digState = false;
         try {
@@ -332,29 +348,6 @@ public class IOHeaterManager implements AttachListener,
         return (digState);
     }
 
-    private void startNewTrigger(final int digPin) {
-        if (triggerTask != null) {
-            triggerTask.cancel(true);
-        }
-        triggerTask = triggerExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                changeOutput(digPin);
-            }
-        });
-    }
-
-    private boolean changeOutput(int digPin) {
-        boolean pinStatus = this.getDigitalInput(digPin);
-        if(pinStatus) {
-            this.heaterStateEventHandler.heaterStarted();
-        }
-        else {
-            this.heaterStateEventHandler.heaterStopped();
-        }
-        return (pinStatus);
-    }
-    
     private void initialiseHeater() {
         try {
             this.stopHeater();
@@ -364,7 +357,28 @@ public class IOHeaterManager implements AttachListener,
             }
         }
     }
-
-    private final ExecutorService triggerExecutor = Executors.newSingleThreadExecutor();
-    private Future<?> triggerTask;
+    
+    private void initialisePump() {
+        this.stopPump();
+    }
+    
+    private void initialiseProximity() {
+        if (this.isProximity()) {
+            this.spectrometerEventHandler.spectrometerProximityOn();
+        } else {
+            this.spectrometerEventHandler.spectrometerProximityOff();
+        }
+    }
+    
+    private boolean isProximity() {
+        return this.getDigitalInput(PUMP_DIGITAL_OUTPUT_PIN);
+    }
+    
+    private void stopPump() {
+        this.setDigitalOutput(PUMP_DIGITAL_OUTPUT_PIN, false);
+    }
+    
+    private void startPump() {
+        this.setDigitalOutput(PUMP_DIGITAL_OUTPUT_PIN, true);
+    }
 }

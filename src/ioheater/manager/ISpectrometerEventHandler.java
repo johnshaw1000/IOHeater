@@ -10,25 +10,25 @@ package ioheater.manager;
  * Event raised for a state change on the interface kit.
  * @author jshaw
  */
-public interface IInterfaceKitStateEventHandler {
+public interface ISpectrometerEventHandler {
 
     /**
      * Input state changed to "Low".
      */
-    void inputStateChangedLow();
+    void spectrometerProximityOn();
 
     /**
      * Input state changed to "High".
      */
-    void inputStateChangedHigh();
+    void spectrometerProximityOff();
 
     /**
      * Output state changed to "Low".
      */
-    void outputStateChangedLow();
+    void pumpStateOff();
 
     /**
      * Output state changed to "High".
      */
-    void outputStateChangedHigh();
+    void pumpStateOn();
 }

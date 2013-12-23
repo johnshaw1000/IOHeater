@@ -21,4 +21,9 @@ public interface IHeaterStateEventHandler {
      * Heater started event.
      */
     void heaterStarted();
+    
+    /**
+     * Heater manager stopped event.
+     */
+    void heaterManagerStopped();
 }

@@ -29,7 +29,8 @@ public class InterfaceKitPhidget extends Phidget {
     private int sensorChangeTrigger = 10;
     private static InterfaceKitPhidget instance = null;
     private boolean inputState = false;
-    private boolean outputState = false;
+    private boolean outputStatePin0 = true;
+    private boolean outputStatePin1 = false;
     
     /**
      * Constructor
@@ -120,7 +121,7 @@ public class InterfaceKitPhidget extends Phidget {
      * @throws PhidgetException
      */
     public int getInputCount() throws PhidgetException {
-        return 0;
+        return 1;
     }
     
     /**
@@ -140,7 +141,11 @@ public class InterfaceKitPhidget extends Phidget {
      * @throws PhidgetException
      */
     public boolean getOutputState(int digPin) throws PhidgetException {
-        return this.outputState;
+        if (digPin == 0) {
+            return this.outputStatePin0;
+        }
+        
+        return this.outputStatePin1;
     }
     
     /**
@@ -149,7 +154,7 @@ public class InterfaceKitPhidget extends Phidget {
      * @throws PhidgetException
      */
     public int getOutputCount() throws PhidgetException {
-        return 0;
+        return 2;
     }
     
     /**
@@ -159,11 +164,13 @@ public class InterfaceKitPhidget extends Phidget {
      * @throws PhidgetException
      */
     public void setOutputState(int digPin, boolean value) throws PhidgetException {
-        this.outputState = value;
-        this.outputChangeListener.outputChanged(new OutputChangeEvent(this, digPin, value));
+        if (digPin == 0) {
+            this.outputStatePin0 = value;
+        } else {
+            this.outputStatePin1 = value;
+        }
         
-        this.inputState = value;
-        this.inputChangeListener.inputChanged(new InputChangeEvent(this, digPin, value));
+        this.outputChangeListener.outputChanged(new OutputChangeEvent(this, digPin, value));
     }
     
     /**
@@ -217,5 +224,11 @@ public class InterfaceKitPhidget extends Phidget {
             this.resetSensorRawValuePrevious();
             this.sensorChangeListener.sensorChanged(new SensorChangeEvent(null, 0, this.sensorRawValue));
         }
+    }
+    
+    public void setInputState(int pin, boolean state) {
+        this.inputState = state;
+        
+        this.inputChangeListener.inputChanged(new InputChangeEvent(this, pin, state));
     }
 }
